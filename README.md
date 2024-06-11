@@ -86,5 +86,73 @@ After loading the dataset into a pandas DataFrame using pandas’ ‘pd.read_csv
 4.	Corrected mis-typed entries for the GENDER and EDUCATION variables using ‘replace()’. In GENDER, ‘m’ and ‘f’ were replaced with ‘male’ and ‘female’, and in EDUCATION, ‘hs’ and ‘na’ were replaced with ‘high school’ and ‘none’. 
 5.	For Data Transformation and Scaling, I one-hot encoded discrete nominal variables with ‘pd.get_dummies()’ to represent them as binary indicators, normalized continuous variables with min-max scaling using scikit-learn’s ‘MinMaxScaler()’, and label encoded discrete variables using ‘LabelEnconder()’.
 
-The AGE variable is the one whose histogram shows more obvious changes before and after pre-processing. Both histograms were scaled from 0 to 3000 in jumps of 500.
+The AGE variable is the one whose histogram shows more obvious changes before and after pre-processing. Both histograms were scaled from 0 to 3000 in jumps of 500.  
+
+![image](https://github.com/westrany/Data-Mining-Example/assets/69496007/456447c0-564e-4e46-9e26-e187ddf26110)  
+
+From the histograms, we can gain the following insights into the effect of data transformation on the variable:  
+
+- Shape of the Distribution: both before and after histograms have a similar shape to one another, with two peaks at 40-64 and 26-39 which suggests a bimodal distribution. If we were to order the bars from younger age groups to older age groups, we would notice a somewhat bell-shaped histogram, suggesting normal distribution in the data.
+- Central Tendency: all three values of Mode, Median and Mean are higher before preprocessing and lower after preprocessing.
+- Spread: in both histograms, there are higher number of customers in the age groups 40-64 and 26-39, suggesting that customers within the age range 26-64 are significantly more likely to own a car than those outside of this range.
+- Skewness and Kurtosis: for both histograms the condition of Mode < Median < Mean is met, suggesting that the graphs are positively skewed. 
+
+Data was split 50/50 using scikit-learn’s ‘train_test_split()’, dividing the data into equally sized test and training datasets. The test dataset was then separated to evaluate the model’s performance on unseen data.   
+
+## Modelling  
+
+I have chosen to build models using Decision Trees, Random Forests and Support Vector Machines (SVM). The following table lists the hyperparameters per model and the effects of each parameter:  
+
+| Model                     | Hyperparameters      | Effects                                          | Validation                          |
+|---------------------------|----------------------|--------------------------------------------------|-------------------------------------|
+| Decision Trees            | max_depth            | Maximum depth of tree                            | k-fold cross-validation             |
+|                           | min_samples_split    | Minimum number of samples needed to split an internal node |                                     |
+|                           | min_samples_leaf     | Minimum number of samples needed to be a leaf node |                                     |
+| Random Forests            | n_estimators         | Number of trees in the forest                    | Randomized search with cross-validation |
+|                           | max_depth            | Maximum depth of each tree                       |                                     |
+|                           | min_samples_split    | Minimum number of samples needed to split an internal node |                                     |
+|                           | min_samples_leaf     | Minimum number of samples needed to be a leaf node |                                     |
+| Support Vector Machines (SVM) | C               | Regularization parameter                         | Coarse-to-Fine Search               |
+|                           | kernel               | Kernel type used in the algorithm                |                                     |
+|                           | gamma                | Kernel coefficient                               |                                     |
+
+Summary of Decision Tree results:
+
+![image](https://github.com/westrany/Data-Mining-Example/assets/69496007/5fad98d9-b587-42ae-a69f-3d8ea428ac81)
+
+Summary of Random Forest results:  
+
+| n_estimators | min_samples_split | min_samples_leaf | max_depth | mean_test_score | std_test_score |
+|--------------|-------------------|------------------|-----------|-----------------|----------------|
+| 100          | 10                | 1                | 0         | 0.844607654     | 0.006080036    |
+| 50           | 10                | 2                | 0         | 0.841540287     | 0.00696728     |
+| 100          | 5                 | 4                | 0         | 0.840925848     | 0.008252704    |
+| 100          | 5                 | 1                | 10        | 0.840158742     | 0.006032502    |
+| 200          | 2                 | 2                | 0         | 0.839546069     | 0.007032148    |
+| 200          | 10                | 4                | 5         | 0.824359195     | 0.00974315     |
+
+
+Based on these results, the Random Forest model seemed to work better. Running it on all data, we obtain the following metrics:  
+
+- Accuracy: 0.8386503067484663
+- Precision: 0.7525562372188139
+- Recall: 0.7215686274509804
+- F1 score: 0.7367367367367368
+  
+These metrics further provide information on the model’s accuracy, ability to correctly identify positive cases (precision), ability to capture positive cases (recall), and the overall balance between precision and recall (F1 score).
+
+## Results and Errors  
+
+To evaluate how the final model performs, we test it on the test dataset.   
+
+The Random Forest model achieved an accuracy of approximately 0.844 meaning that it correctly predicted the target variable 84.4% of the time during the testing period.   
+
+![image](https://github.com/westrany/Data-Mining-Example/assets/69496007/f76538a5-7189-486f-8cad-9895f4032663)
+
+The confusion matrix obtained (left) shows that the model wrongly predicts false positives (120) and false negatives (135) more often than it returns true positives (375) and true negatives (1000).  Depending on the problem at hand, these errors can have different implications. On the current task of predicting whether a customer will claim car insurance, we need to have in consideration that false positives can occur due to unnecessary costs (which can lead to additional expenses being allocated to customers who wouldn’t claim insurance) and customer experience (where it might cause frustration or inconvenience for customers who are wrongly mislabelled), whereas false negatives can occur due to missed opportunities (where customers could’ve claimed insurance but did not) and customer satisfaction (where a customer’s potential to be identified as a possible claimant was overlooked). Based on this and my own experience, I would deem false positives as being more hurtful for the insurance company.   
+
+The metrics of accuracy, precision, recall and F1 score, as identified in the previous section, also hold valuable insights into the model. Accuracy is ratio of correctly predicted samples to the total number of samples; in this case, the model resulted in an accuracy of approximately 83.87%. Precision is ration of true positive predictions to the total number of positive predictions; in this case, the model resulted in a precision of approximately 75.26%. Recall is ratio of true positive predictions to the total number of actual positive samples; in this case, the model resulted in a recall of approximately 72.16%. F1 score is a balanced measure of the model’s performance by considering both precision and recall, ranging from 0 to 1, where 1 stands for the best performance; in this case, the model resulted in a F1 score of approximately 0.7367, indicating a reasonably balanced performance between precision and recall. 
+
+
+
 
