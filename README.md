@@ -1,4 +1,4 @@
-# Car Insurance Claim Predictor ML  
+# Car Insurance Claim Prediction ML  
 
 ## Business Understanding  
 
