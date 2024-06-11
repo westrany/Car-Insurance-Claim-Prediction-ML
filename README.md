@@ -36,6 +36,55 @@ With regards to project methodology, I will be using the Cross-Industry Standard
 5.	Evaluation: evaluating the model’s performance through appropriate evaluation metrics and selecting the best-performing model.
 6.	Deployment: documenting findings, preparing a summary of the project, and presenting said report to stakeholders.
 
+## Data Understanding
+
+To aid in building the solution, I have listed the variables found in the dataset alongside their data type and suitability for the project:  
+
+| Variable                  | Data Type                                   | Suitability                                                       |
+|---------------------------|---------------------------------------------|-------------------------------------------------------------------|
+| ID                        | Nominal - unique identifier for each customer | Not considered, it has no predictive value                        |
+| AGE                       | Nominal – categorical age range             | Considered, should be treated as discrete nominal variable        |
+| GENDER                    | Nominal – categorical gender                | Considered, should be treated as discrete nominal variable        |
+| RACE                      | Nominal – categorical race                  | Considered, should be treated as discrete nominal variable        |
+| DRIVING_EXPERIENCE        | Nominal – categorical driving experience range | Considered, should be treated as discrete nominal variable        |
+| EDUCATION                 | Nominal – categorical education level       | Considered, should be treated as discrete nominal variable        |
+| INCOME                    | Nominal – categorical income level          | Considered, should be treated as discrete nominal variable        |
+| CREDIT_SCORE              | Numeric – continuous credit score           | Considered, should be treated as continuous variable              |
+| HAS_OWN_VEHICLE           | Nominal – categorical ownership of a vehicle | Considered, should be treated as discrete nominal variable        |
+| VEHICLE_YEAR              | Nominal – categorical vehicle year range    | Considered, should be treated as discrete nominal variable        |
+| IS_MARRIED                | Nominal – categorical marital status        | Considered, should be treated as discrete nominal variable        |
+| HAS_CHILDREN              | Nominal – categorical presence of children  | Considered, should be treated as discrete nominal variable        |
+| COUNTRY                   | Nominal – categorical country of residence  | Considered, should be treated as discrete nominal variable        |
+| POSTAL_CODE               | Nominal – categorical postal code           | Not considered, specified to customer location, has no predictive value |
+| ANNUAL_MILEAGE            | Numeric – continuous estimated annual mileage | Considered, should be treated as continuous variable              |
+| VEHICLE_TYPE              | Nominal – categorical type of vehicle       | Considered, should be treated as discrete nominal variable        |
+| SPEEDING_VIOLATIONS       | Numeric – discrete count of speeding violations | Considered, should be treated as discrete variable               |
+| DRIVING_UNDER_INFLUENCE   | Nominal – categorical driving under the influence | Considered, should be treated as discrete nominal variable    |
+| PAST_ACCIDENTS            | Numeric – discrete count of past accidents  | Considered, should be treated as discrete variable                |
+| HAS_CLAIMED_INSURANCE     | Nominal – categorical insurance claim status | Target variable, to be predicted                                   |
+
+Note that “AGE” could also be classified as an ordinal variable rather than nominal as it represents data with a meaningful order but without a consistent numeric difference between categories. However, since some ML algorithms may treat this ordinal variable as nominal during modelling, it made more sense to consider “AGE” as being nominal since in practice the treatment of ordinal variables varies accordingly to the goals of the project at hand.  
+
+In sum, all variables are suitable for the project except for “ID” and “POSTAL_CODE”.   
+
+With regards to inputs and outputs, I selected input variables based on the assumption that they may have predictive value in determining whether or not a customer will claim insurance. The output variable will be determined based on the nature of the task – to build a classifier to predict the status of insurance claims – and the model will be training to predict its binary status based on input attributes.   
 
 
+| Input                                                                                                     | Output                  |
+|-----------------------------------------------------------------------------------------------------------|-------------------------|
+| AGE, GENDER, RACE, DRIVING_EXPERIENCE, EDUCATION, INCOME, CREDIT_SCORE, HAS_OWN_VEHICLE, VEHICLE_YEAR, IS_MARRIED, HAS_CHILDREN, COUNTRY, ANNUAL_MILEAGE, VEHICLE_TYPE, SPEEDING_VIOLATIONS, DRIVING_UNDER_INFLUENCE, PAST_ACCIDENTS | HAS_CLAIMED_INSURANCE   |
+
+These decisions were made with the task goal in mind and will contribute to the building of a predictive model that can effectively classify whether or not a customer will claim car insurance.   
+
+## Data Preparation 
+
+After loading the dataset into a pandas DataFrame using pandas’ ‘pd.read_csv()’, I performed the following data pre-processing steps:  
+
+1.	Dropped rows and columns with missing values using ‘dropna()’.
+2.	Filled missing values with their respective median using ‘fillna(df.median())’.
+3.	Checked for duplicate rows and removed them using ‘drop_duplicates()’.
+4.	Corrected mis-typed entries for the GENDER and EDUCATION variables using ‘replace()’. In GENDER, ‘m’ and ‘f’ were replaced with ‘male’ and ‘female’, and in EDUCATION, ‘hs’ and ‘na’ were replaced with ‘high school’ and ‘none’. 
+5.	For Data Transformation and Scaling, I one-hot encoded discrete nominal variables with ‘pd.get_dummies()’ to represent them as binary indicators, normalized continuous variables with min-max scaling using scikit-learn’s ‘MinMaxScaler()’, and label encoded discrete variables using ‘LabelEnconder()’.
+
+The AGE variable is the one whose histogram shows more obvious changes before and after pre-processing. Both histograms were scaled from 0 to 3000 in jumps of 500.
 
