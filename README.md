@@ -1,1 +1,1 @@
-# Data Mining Example
+# Car Insurance Claim Predictor ML
